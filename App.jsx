@@ -2,41 +2,48 @@ import React, { useState } from 'react';
 import { Plus, Trash2, FileText, Code, Download, Copy, Check } from 'lucide-react';
 
 const generateMarkdown = (data) => {
-  let md = `# ${data.fullName}\n\n`;
-  md += `${data.email} | ${data.phone} | ${data.location}\n`;
-  if (data.linkedin) md += `[LinkedIn](${data.linkedin})\n`;
-  md += `\n---\n\n`;
+  const parts = [
+    `# ${data.fullName}\n`,
+    `${data.email} | ${data.phone} | ${data.location}`,
+    data.linkedin ? `[LinkedIn](${data.linkedin})` : '',
+    '\n---\n'
+  ];
 
   if (data.summary) {
-    md += `## Professional Summary\n\n${data.summary}\n\n`;
+    parts.push(`## Professional Summary\n\n${data.summary}\n`);
   }
 
   if (data.experience.length > 0) {
-    md += `## Experience\n\n`;
+    parts.push('## Experience\n');
     data.experience.forEach(job => {
-      md += `### ${job.title}\n`;
-      md += `**${job.company}** | ${job.startDate} - ${job.endDate}\n\n`;
-      md += `${job.description}\n\n`;
+      parts.push(
+        `### ${job.title}`,
+        `**${job.company}** | ${job.startDate} - ${job.endDate}\n`,
+        `${job.description}\n`
+      );
     });
   }
 
   if (data.education.length > 0) {
-    md += `## Education\n\n`;
+    parts.push('## Education\n');
     data.education.forEach(edu => {
-      md += `### ${edu.degree}\n`;
-      md += `**${edu.school}** | ${edu.year}\n\n`;
+      parts.push(
+        `### ${edu.degree}`,
+        `**${edu.school}** | ${edu.year}\n`
+      );
     });
   }
 
   if (data.skills) {
-    md += `## Skills\n\n${data.skills}\n`;
+    parts.push(`## Skills\n\n${data.skills}`);
   }
 
-  return md;
+  return parts.filter(Boolean).join('\n\n');
 };
 
 const generateLatex = (data) => {
-  let tex = `\\documentclass[11pt,a4paper]{article}
+  const parts = [
+    `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage{geometry}
 \\geometry{left=2cm, right=2cm, top=2cm, bottom=2cm}
@@ -57,55 +64,47 @@ const generateLatex = (data) => {
 \\end{center}
 
 \\hrule
-\\vspace{0.5cm}
-
-`;
+\\vspace{0.5cm}\n`
+  ];
 
   if (data.summary) {
-    tex += `\\section*{Professional Summary}
-${data.summary}
-
-`;
+    parts.push(`\\section*{Professional Summary}\n${data.summary}\n`);
   }
 
   if (data.experience.length > 0) {
-    tex += `\\section*{Experience}
-\\begin{itemize}[leftmargin=*]
-`;
+    parts.push('\\section*{Experience}\n\\begin{itemize}[leftmargin=*]');
     data.experience.forEach(job => {
-      tex += `    \\item \\textbf{${job.title}} at \\textit{${job.company}} \\hfill ${job.startDate} -- ${job.endDate} \\\\
+      parts.push(`    \\item \\textbf{${job.title}} at \\textit{${job.company}} \\hfill ${job.startDate} -- ${job.endDate} \\\\
     ${job.description}
-    \\vspace{0.2cm}
-`;
+    \\vspace{0.2cm}`);
     });
-    tex += `\\end{itemize}
-
-`;
+    parts.push('\\end{itemize}\n');
   }
 
   if (data.education.length > 0) {
-    tex += `\\section*{Education}
-\\begin{itemize}[leftmargin=*]
-`;
+    parts.push('\\section*{Education}\n\\begin{itemize}[leftmargin=*]');
     data.education.forEach(edu => {
-      tex += `    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}
-`;
+      parts.push(`    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}`);
     });
-    tex += `\\end{itemize}
-
-`;
+    parts.push('\\end{itemize}\n');
   }
 
   if (data.skills) {
-    tex += `\\section*{Skills}
-${data.skills}
-`;
+    parts.push(`\\section*{Skills}\n${data.skills}`);
   }
 
-  tex += `
-\\end{document}`;
+  parts.push('\n\\end{document}');
+  return parts.join('\n');
+};
 
-  return tex;
+const COMMON_CLASSES = {
+  input: "w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition",
+  sectionTitle: "text-xl font-bold uppercase text-slate-800 mb-2 border-b border-slate-300 pb-1",
+  card: "bg-slate-50 p-4 rounded-lg border border-slate-200 relative group",
+  deleteButton: "absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity",
+  tabButton: (isActive) => `flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all ${
+    isActive ? 'bg-slate-800 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'
+  }`
 };
 
 const InputGroup = ({ label, value, onChange, placeholder, type = "text", multiline = false }) => (
@@ -113,7 +112,7 @@ const InputGroup = ({ label, value, onChange, placeholder, type = "text", multil
     <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
     {multiline ? (
       <textarea
-        className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+        className={COMMON_CLASSES.input}
         rows="4"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -122,7 +121,7 @@ const InputGroup = ({ label, value, onChange, placeholder, type = "text", multil
     ) : (
       <input
         type={type}
-        className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+        className={COMMON_CLASSES.input}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -267,14 +266,14 @@ export default function App() {
 
       {formData.summary && (
         <div className="mb-6">
-          <h2 className="text-xl font-bold uppercase text-slate-800 mb-2 border-b border-slate-300 pb-1">Profile</h2>
+          <h2 className={COMMON_CLASSES.sectionTitle}>Profile</h2>
           <p className="text-slate-700 leading-relaxed">{formData.summary}</p>
         </div>
       )}
 
       {formData.experience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-xl font-bold uppercase text-slate-800 mb-4 border-b border-slate-300 pb-1">Experience</h2>
+          <h2 className={`${COMMON_CLASSES.sectionTitle} mb-4`}>Experience</h2>
           <div className="space-y-5">
             {formData.experience.map(job => (
               <div key={job.id}>
@@ -292,7 +291,7 @@ export default function App() {
 
       {formData.education.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-xl font-bold uppercase text-slate-800 mb-4 border-b border-slate-300 pb-1">Education</h2>
+          <h2 className={`${COMMON_CLASSES.sectionTitle} mb-4`}>Education</h2>
           <div className="space-y-3">
             {formData.education.map(edu => (
               <div key={edu.id} className="flex justify-between">
@@ -309,7 +308,7 @@ export default function App() {
 
       {formData.skills && (
         <div>
-          <h2 className="text-xl font-bold uppercase text-slate-800 mb-2 border-b border-slate-300 pb-1">Skills</h2>
+          <h2 className={COMMON_CLASSES.sectionTitle}>Skills</h2>
           <p className="text-slate-700 leading-relaxed">{formData.skills}</p>
         </div>
       )}
@@ -371,10 +370,10 @@ export default function App() {
               <SectionHeader title="Experience" onAdd={addExperience} />
               <div className="space-y-6">
                 {formData.experience.map((job) => (
-                  <div key={job.id} className="bg-slate-50 p-4 rounded-lg border border-slate-200 relative group">
+                  <div key={job.id} className={COMMON_CLASSES.card}>
                     <button 
                       onClick={() => removeExperience(job.id)}
-                      className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className={COMMON_CLASSES.deleteButton}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -397,10 +396,10 @@ export default function App() {
               <SectionHeader title="Education" onAdd={addEducation} />
               <div className="space-y-4">
                 {formData.education.map((edu) => (
-                  <div key={edu.id} className="bg-slate-50 p-4 rounded-lg border border-slate-200 relative group">
+                  <div key={edu.id} className={COMMON_CLASSES.card}>
                     <button 
                       onClick={() => removeEducation(edu.id)}
-                      className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className={COMMON_CLASSES.deleteButton}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -428,25 +427,19 @@ export default function App() {
         <div className="bg-white p-3 border-b border-slate-300 flex justify-center gap-4 shadow-sm z-10">
           <button
             onClick={() => setActiveTab('preview')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all ${
-              activeTab === 'preview' ? 'bg-slate-800 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            className={COMMON_CLASSES.tabButton(activeTab === 'preview')}
           >
             <FileText size={16} /> Live Preview
           </button>
           <button
             onClick={() => setActiveTab('markdown')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all ${
-              activeTab === 'markdown' ? 'bg-slate-800 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            className={COMMON_CLASSES.tabButton(activeTab === 'markdown')}
           >
             <Download size={16} /> Markdown
           </button>
           <button
             onClick={() => setActiveTab('latex')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all ${
-              activeTab === 'latex' ? 'bg-slate-800 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            className={COMMON_CLASSES.tabButton(activeTab === 'latex')}
           >
             <Code size={16} /> LaTeX
           </button>
