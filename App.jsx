@@ -2,43 +2,40 @@ import React, { useState } from 'react';
 import { Plus, Trash2, FileText, Code, Download, Copy, Check } from 'lucide-react';
 
 const generateMarkdown = (data) => {
-  const parts = [
-    `# ${data.fullName}\n`,
-    `${data.email} | ${data.phone} | ${data.location}`,
-    data.linkedin ? `[LinkedIn](${data.linkedin})` : '',
-    '\n---\n'
-  ];
+  const sections = [];
+  
+  sections.push(`# ${data.fullName}`);
+  sections.push(`${data.email} | ${data.phone} | ${data.location}`);
+  if (data.linkedin) {
+    sections.push(`[LinkedIn](${data.linkedin})`);
+  }
+  sections.push('---');
 
   if (data.summary) {
-    parts.push(`## Professional Summary\n\n${data.summary}\n`);
+    sections.push(`## Professional Summary\n\n${data.summary}`);
   }
 
   if (data.experience.length > 0) {
-    parts.push('## Experience\n');
+    const expSection = ['## Experience'];
     data.experience.forEach(job => {
-      parts.push(
-        `### ${job.title}`,
-        `**${job.company}** | ${job.startDate} - ${job.endDate}\n`,
-        `${job.description}\n`
-      );
+      expSection.push(`### ${job.title}\n**${job.company}** | ${job.startDate} - ${job.endDate}\n\n${job.description}`);
     });
+    sections.push(expSection.join('\n\n'));
   }
 
   if (data.education.length > 0) {
-    parts.push('## Education\n');
+    const eduSection = ['## Education'];
     data.education.forEach(edu => {
-      parts.push(
-        `### ${edu.degree}`,
-        `**${edu.school}** | ${edu.year}\n`
-      );
+      eduSection.push(`### ${edu.degree}\n**${edu.school}** | ${edu.year}`);
     });
+    sections.push(eduSection.join('\n\n'));
   }
 
   if (data.skills) {
-    parts.push(`## Skills\n\n${data.skills}`);
+    sections.push(`## Skills\n\n${data.skills}`);
   }
 
-  return parts.filter(Boolean).join('\n\n');
+  return sections.join('\n\n');
 };
 
 const generateLatex = (data) => {
@@ -240,10 +237,14 @@ export default function App() {
     }));
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+    }
   };
 
   const renderPreview = () => (
@@ -259,7 +260,9 @@ export default function App() {
         </div>
         {formData.linkedin && (
           <div className="text-sm text-blue-600 mt-1">
-             {formData.linkedin}
+            <a href={`https://${formData.linkedin.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer">
+              {formData.linkedin}
+            </a>
           </div>
         )}
       </div>
