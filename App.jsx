@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, FileText, Code, Download, Copy, Check } from 'lucide-react';
-
-// --- Generator Helper Functions ---
 
 const generateMarkdown = (data) => {
   let md = `# ${data.fullName}\n\n`;
@@ -38,7 +36,6 @@ const generateMarkdown = (data) => {
 };
 
 const generateLatex = (data) => {
-  // Using a standard article class for simplicity and robustness in this generator
   let tex = `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage{geometry}
@@ -111,8 +108,6 @@ ${data.skills}
   return tex;
 };
 
-// --- Components ---
-
 const InputGroup = ({ label, value, onChange, placeholder, type = "text", multiline = false }) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
@@ -151,7 +146,6 @@ const SectionHeader = ({ title, onAdd }) => (
 );
 
 export default function App() {
-  // --- State ---
   const [activeTab, setActiveTab] = useState('preview');
   const [copied, setCopied] = useState(false);
 
@@ -190,8 +184,6 @@ export default function App() {
       }
     ]
   });
-
-  // --- Handlers ---
 
   const handleBasicChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -255,11 +247,8 @@ export default function App() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // --- Render Views ---
-
   const renderPreview = () => (
     <div className="bg-white shadow-lg p-8 min-h-[800px] w-full max-w-[800px] mx-auto text-slate-800" id="resume-preview">
-      {/* Header */}
       <div className="text-center border-b-2 border-slate-800 pb-6 mb-6">
         <h1 className="text-4xl font-bold uppercase tracking-wider mb-2">{formData.fullName}</h1>
         <div className="text-sm text-slate-600 flex flex-wrap justify-center gap-3">
@@ -276,7 +265,6 @@ export default function App() {
         )}
       </div>
 
-      {/* Summary */}
       {formData.summary && (
         <div className="mb-6">
           <h2 className="text-xl font-bold uppercase text-slate-800 mb-2 border-b border-slate-300 pb-1">Profile</h2>
@@ -284,7 +272,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Experience */}
       {formData.experience.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xl font-bold uppercase text-slate-800 mb-4 border-b border-slate-300 pb-1">Experience</h2>
@@ -303,7 +290,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Education */}
       {formData.education.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xl font-bold uppercase text-slate-800 mb-4 border-b border-slate-300 pb-1">Education</h2>
@@ -321,7 +307,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Skills */}
       {formData.skills && (
         <div>
           <h2 className="text-xl font-bold uppercase text-slate-800 mb-2 border-b border-slate-300 pb-1">Skills</h2>
@@ -355,8 +340,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans text-slate-900">
-      
-      {/* --- Left Column: Editor --- */}
       <div className="w-full md:w-5/12 lg:w-1/3 bg-white border-r border-slate-200 h-screen overflow-y-auto custom-scrollbar shadow-xl z-10">
         <div className="p-6">
           <div className="mb-6 pb-6 border-b border-slate-100">
@@ -436,14 +419,12 @@ export default function App() {
               <InputGroup multiline label="Skills List" value={formData.skills} onChange={(v) => handleBasicChange('skills', v)} placeholder="Java, Python, Public Speaking..." />
             </section>
 
-            <div className="h-12"></div> {/* Spacer */}
+            <div className="h-12"></div>
           </div>
         </div>
       </div>
 
-      {/* --- Right Column: Preview & Export --- */}
       <div className="w-full md:w-7/12 lg:w-2/3 bg-slate-200 h-screen flex flex-col">
-        {/* Toolbar */}
         <div className="bg-white p-3 border-b border-slate-300 flex justify-center gap-4 shadow-sm z-10">
           <button
             onClick={() => setActiveTab('preview')}
@@ -471,14 +452,12 @@ export default function App() {
           </button>
         </div>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 flex justify-center">
           {activeTab === 'preview' && renderPreview()}
           {activeTab === 'markdown' && renderCodeView(generateMarkdown(formData), 'Markdown')}
           {activeTab === 'latex' && renderCodeView(generateLatex(formData), 'LaTeX')}
         </div>
       </div>
-
     </div>
   );
 }
