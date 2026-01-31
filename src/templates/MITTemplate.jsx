@@ -22,7 +22,7 @@ const MITTemplate = ({ formData }) => {
       id="resume-preview"
       style={{
         fontFamily: '"Times New Roman", Times, serif',
-        padding: '48px', // ~0.67 inch margins (adjusted for web display, PDF will have 1 inch)
+        padding: '48px', // Web display padding; PDF margins are applied separately during generation
         boxSizing: 'border-box',
         lineHeight: '1.3'
       }}

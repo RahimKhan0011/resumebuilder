@@ -340,7 +340,7 @@ export const generateDOCX = async (formData, filename = 'resume.docx') => {
         properties: {
           page: {
             margin: {
-              top: 1440, // 1 inch in twips (1 inch = 1440 twips)
+              top: 1440, // 1 inch = 1440 twips (twentieths of a point)
               right: 1440,
               bottom: 1440,
               left: 1440

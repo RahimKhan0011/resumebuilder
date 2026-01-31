@@ -1,10 +1,10 @@
 import React from 'react';
 
 /**
- * Stanford/Deedy Resume Template
- * Based on the popular two-column asymmetric Deedy Resume LaTeX template
- * Modern, clean design with a colored left sidebar
- * Commonly used by CS students and tech professionals
+ * Stanford/Modern Resume Template
+ * Modern two-column design with colored sidebar
+ * Clean sans-serif design popular with tech professionals
+ * Uses Arial/Helvetica for a clean, modern look
  */
 const StanfordTemplate = ({ formData }) => {
   // Responsive name sizing for long names
