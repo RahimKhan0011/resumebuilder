@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import { HomePage, MITPage, StanfordPage, OxfordPage } from './pages';
+import { HomePage, MITPage, StanfordPage, OxfordPage, CreativePage, MinimalistPage } from './pages';
 import './index.css';
 
 /**
@@ -16,6 +16,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/mit" element={<MITPage />} />
         <Route path="/stanford" element={<StanfordPage />} />
         <Route path="/oxford" element={<OxfordPage />} />
+        <Route path="/creative" element={<CreativePage />} />
+        <Route path="/minimalist" element={<MinimalistPage />} />
       </Routes>
     </HashRouter>
   </React.StrictMode>,

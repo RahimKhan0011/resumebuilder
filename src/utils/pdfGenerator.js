@@ -8,6 +8,7 @@ const A4_WIDTH = 210;
 const A4_HEIGHT = 297;
 const MARGIN = 25.4; // 1 inch in mm
 const CONTENT_WIDTH = A4_WIDTH - (MARGIN * 2); // ~159.2mm
+const LINE_SPACING = 6; // Line spacing in mm
 
 /**
  * Black and white colors only
@@ -41,6 +42,12 @@ export const generatePDF = async (formData, filename = 'resume.pdf', template = 
         break;
       case 'oxford':
         generateOxfordPDF(pdf, formData);
+        break;
+      case 'creative':
+        generateCreativePDF(pdf, formData);
+        break;
+      case 'minimalist':
+        generateMinimalistPDF(pdf, formData);
         break;
       case 'mit':
       default:
@@ -93,7 +100,7 @@ function generateMITPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.black);
     const nameWidth = pdf.getTextWidth(formData.fullName);
     pdf.text(formData.fullName, (A4_WIDTH - nameWidth) / 2, y);
-    y += 8;
+    y += LINE_SPACING + 2;
   }
 
   // Contact line
@@ -106,7 +113,7 @@ function generateMITPDF(pdf, formData) {
     const contactText = contactParts.join(' | ');
     const contactWidth = pdf.getTextWidth(contactText);
     pdf.text(contactText, (A4_WIDTH - contactWidth) / 2, y);
-    y += 4;
+    y += LINE_SPACING;
   }
 
   // Links line
@@ -120,7 +127,7 @@ function generateMITPDF(pdf, formData) {
     const linkText = linkParts.join(' | ');
     const linkWidth = pdf.getTextWidth(linkText);
     pdf.text(linkText, (A4_WIDTH - linkWidth) / 2, y);
-    y += 4;
+    y += LINE_SPACING;
   }
 
   // Location
@@ -129,7 +136,7 @@ function generateMITPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.gray);
     const locWidth = pdf.getTextWidth(formData.location);
     pdf.text(formData.location, (A4_WIDTH - locWidth) / 2, y);
-    y += 6;
+    y += LINE_SPACING;
   }
 
   // ===== EDUCATION =====
@@ -155,14 +162,14 @@ function generateMITPDF(pdf, formData) {
         const yearWidth = pdf.getTextWidth(edu.year);
         pdf.text(edu.year, rightMargin - yearWidth, y);
       }
-      y += 4;
+      y += LINE_SPACING;
 
       // Degree
       if (edu.degree) {
         setFont('italic', 10);
         pdf.setTextColor(...COLORS.black);
         pdf.text(edu.degree, leftMargin, y);
-        y += 4;
+        y += LINE_SPACING;
       }
 
       // GPA
@@ -173,7 +180,7 @@ function generateMITPDF(pdf, formData) {
         setFont('normal', 9);
         pdf.setTextColor(...COLORS.gray);
         pdf.text(grades.join(' | '), leftMargin, y);
-        y += 4;
+        y += LINE_SPACING;
       }
       y += 2;
     });
@@ -201,14 +208,14 @@ function generateMITPDF(pdf, formData) {
       pdf.setTextColor(...COLORS.gray);
       const dateWidth = pdf.getTextWidth(dateText);
       pdf.text(dateText, rightMargin - dateWidth, y);
-      y += 4;
+      y += LINE_SPACING;
 
       // Title
       if (job.title) {
         setFont('italic', 10);
         pdf.setTextColor(...COLORS.black);
         pdf.text(job.title, leftMargin, y);
-        y += 5;
+        y += LINE_SPACING;
       }
 
       // Description bullets
@@ -226,9 +233,9 @@ function generateMITPDF(pdf, formData) {
           // Wrap text
           const textLines = pdf.splitTextToSize(cleanLine, CONTENT_WIDTH - 8);
           textLines.forEach((tl, i) => {
-            pdf.text(tl, leftMargin + 6, y + (i * 3.5));
+            pdf.text(tl, leftMargin + 6, y + (i * LINE_SPACING));
           });
-          y += textLines.length * 3.5 + 1;
+          y += textLines.length * LINE_SPACING + 1;
         });
       }
       y += 3;
@@ -248,9 +255,9 @@ function generateMITPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.gray);
     const summaryLines = pdf.splitTextToSize(formData.summary, CONTENT_WIDTH);
     summaryLines.forEach((line, i) => {
-      pdf.text(line, leftMargin, y + (i * 4));
+      pdf.text(line, leftMargin, y + (i * LINE_SPACING));
     });
-    y += summaryLines.length * 4 + 4;
+    y += summaryLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== SKILLS =====
@@ -269,9 +276,9 @@ function generateMITPDF(pdf, formData) {
     setFont('normal', 10);
     const skillsLines = pdf.splitTextToSize(formData.skills, CONTENT_WIDTH - 15);
     skillsLines.forEach((line, i) => {
-      pdf.text(line, leftMargin + 14, y + (i * 4));
+      pdf.text(line, leftMargin + 14, y + (i * LINE_SPACING));
     });
-    y += skillsLines.length * 4 + 4;
+    y += skillsLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== LANGUAGES =====
@@ -327,7 +334,7 @@ function generateStanfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.black);
     const nameWidth = pdf.getTextWidth(formData.fullName);
     pdf.text(formData.fullName, (A4_WIDTH - nameWidth) / 2, y);
-    y += 8;
+    y += LINE_SPACING + 2;
   }
 
   // Contact line
@@ -341,7 +348,7 @@ function generateStanfordPDF(pdf, formData) {
     const contactText = contactParts.join(' | ');
     const contactWidth = pdf.getTextWidth(contactText);
     pdf.text(contactText, (A4_WIDTH - contactWidth) / 2, y);
-    y += 4;
+    y += LINE_SPACING;
   }
 
   // Links line
@@ -355,7 +362,7 @@ function generateStanfordPDF(pdf, formData) {
     const linkText = linkParts.join(' | ');
     const linkWidth = pdf.getTextWidth(linkText);
     pdf.text(linkText, (A4_WIDTH - linkWidth) / 2, y);
-    y += 6;
+    y += LINE_SPACING;
   }
 
   // ===== EDUCATION =====
@@ -380,13 +387,13 @@ function generateStanfordPDF(pdf, formData) {
         const yearWidth = pdf.getTextWidth(edu.year);
         pdf.text(edu.year, rightMargin - yearWidth, y);
       }
-      y += 4;
+      y += LINE_SPACING;
 
       if (edu.degree) {
         setFont('italic', 10);
         pdf.setTextColor(...COLORS.darkGray);
         pdf.text(edu.degree, leftMargin, y);
-        y += 4;
+        y += LINE_SPACING;
       }
 
       const grades = [];
@@ -396,7 +403,7 @@ function generateStanfordPDF(pdf, formData) {
         setFont('normal', 9);
         pdf.setTextColor(...COLORS.gray);
         pdf.text(grades.join(' | '), leftMargin, y);
-        y += 4;
+        y += LINE_SPACING;
       }
       y += 2;
     });
@@ -423,13 +430,13 @@ function generateStanfordPDF(pdf, formData) {
       pdf.setTextColor(...COLORS.gray);
       const dateWidth = pdf.getTextWidth(dateText);
       pdf.text(dateText, rightMargin - dateWidth, y);
-      y += 4;
+      y += LINE_SPACING;
 
       if (job.company) {
         setFont('normal', 10);
         pdf.setTextColor(...COLORS.darkGray);
         pdf.text(job.company, leftMargin, y);
-        y += 5;
+        y += LINE_SPACING;
       }
 
       if (job.description) {
@@ -443,9 +450,9 @@ function generateStanfordPDF(pdf, formData) {
           pdf.text('•', leftMargin + 2, y);
           const textLines = pdf.splitTextToSize(cleanLine, CONTENT_WIDTH - 8);
           textLines.forEach((tl, i) => {
-            pdf.text(tl, leftMargin + 6, y + (i * 3.5));
+            pdf.text(tl, leftMargin + 6, y + (i * LINE_SPACING));
           });
-          y += textLines.length * 3.5 + 1;
+          y += textLines.length * LINE_SPACING + 1;
         });
       }
       y += 3;
@@ -465,9 +472,9 @@ function generateStanfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.gray);
     const summaryLines = pdf.splitTextToSize(formData.summary, CONTENT_WIDTH);
     summaryLines.forEach((line, i) => {
-      pdf.text(line, leftMargin, y + (i * 4));
+      pdf.text(line, leftMargin, y + (i * LINE_SPACING));
     });
-    y += summaryLines.length * 4 + 4;
+    y += summaryLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== SKILLS =====
@@ -483,9 +490,9 @@ function generateStanfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.darkGray);
     const skillsLines = pdf.splitTextToSize(formData.skills, CONTENT_WIDTH);
     skillsLines.forEach((line, i) => {
-      pdf.text(line, leftMargin, y + (i * 4));
+      pdf.text(line, leftMargin, y + (i * LINE_SPACING));
     });
-    y += skillsLines.length * 4 + 4;
+    y += skillsLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== LANGUAGES =====
@@ -532,7 +539,7 @@ function generateOxfordPDF(pdf, formData) {
     setFont('bold', 13);
     pdf.setTextColor(...COLORS.black);
     pdf.text(text.toUpperCase(), leftMargin, y);
-    y += 5;
+    y += LINE_SPACING;
   };
 
   // ===== HEADER =====
@@ -542,13 +549,13 @@ function generateOxfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.black);
     const nameWidth = pdf.getTextWidth(formData.fullName);
     pdf.text(formData.fullName, (A4_WIDTH - nameWidth) / 2, y);
-    y += 4;
+    y += LINE_SPACING;
     
     // Double border line
     pdf.setDrawColor(0, 0, 0);
     pdf.setLineWidth(0.8);
     pdf.line(leftMargin, y, rightMargin, y);
-    y += 8;
+    y += LINE_SPACING + 2;
   }
 
   // Contact info centered
@@ -562,7 +569,7 @@ function generateOxfordPDF(pdf, formData) {
     const contactText = contactParts.join(' • ');
     const contactWidth = pdf.getTextWidth(contactText);
     pdf.text(contactText, (A4_WIDTH - contactWidth) / 2, y);
-    y += 5;
+    y += LINE_SPACING;
   }
 
   // Links
@@ -576,7 +583,7 @@ function generateOxfordPDF(pdf, formData) {
     const linkText = linkParts.join(' • ');
     const linkWidth = pdf.getTextWidth(linkText);
     pdf.text(linkText, (A4_WIDTH - linkWidth) / 2, y);
-    y += 8;
+    y += LINE_SPACING + 2;
   }
 
   // ===== PERSONAL STATEMENT =====
@@ -592,12 +599,12 @@ function generateOxfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.gray);
     const summaryLines = pdf.splitTextToSize(formData.summary, CONTENT_WIDTH - 8);
     summaryLines.forEach((line, i) => {
-      pdf.text(line, leftMargin + 6, y + (i * 4.5));
+      pdf.text(line, leftMargin + 6, y + (i * LINE_SPACING));
     });
     
     // Draw left border
-    pdf.line(leftMargin + 2, startY - 2, leftMargin + 2, y + summaryLines.length * 4.5);
-    y += summaryLines.length * 4.5 + 6;
+    pdf.line(leftMargin + 2, startY - 2, leftMargin + 2, y + summaryLines.length * LINE_SPACING);
+    y += summaryLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== EDUCATION =====
@@ -622,14 +629,14 @@ function generateOxfordPDF(pdf, formData) {
         const yearWidth = pdf.getTextWidth(edu.year);
         pdf.text(edu.year, rightMargin - yearWidth, y);
       }
-      y += 5;
+      y += LINE_SPACING;
 
       // Degree
       if (edu.degree) {
         setFont('italic', 11);
         pdf.setTextColor(...COLORS.gray);
         pdf.text(edu.degree, leftMargin + 6, y);
-        y += 5;
+        y += LINE_SPACING;
       }
 
       // GPA
@@ -640,7 +647,7 @@ function generateOxfordPDF(pdf, formData) {
         setFont('normal', 10);
         pdf.setTextColor(...COLORS.lightGray);
         pdf.text(grades.join(' | '), leftMargin + 6, y);
-        y += 4;
+        y += LINE_SPACING;
       }
 
       // Draw left border
@@ -671,14 +678,14 @@ function generateOxfordPDF(pdf, formData) {
       pdf.setTextColor(...COLORS.gray);
       const dateWidth = pdf.getTextWidth(dateText);
       pdf.text(dateText, rightMargin - dateWidth, y);
-      y += 5;
+      y += LINE_SPACING;
 
       // Company
       if (job.company) {
         setFont('italic', 11);
         pdf.setTextColor(...COLORS.gray);
         pdf.text(job.company, leftMargin + 6, y);
-        y += 5;
+        y += LINE_SPACING;
       }
 
       // Description
@@ -695,9 +702,9 @@ function generateOxfordPDF(pdf, formData) {
             pdf.text('•', leftMargin + 8, y);
             const textLines = pdf.splitTextToSize(cleanLine, CONTENT_WIDTH - 12);
             textLines.forEach((tl, i) => {
-              pdf.text(tl, leftMargin + 12, y + (i * 4));
+              pdf.text(tl, leftMargin + 12, y + (i * LINE_SPACING));
             });
-            y += textLines.length * 4 + 1;
+            y += textLines.length * LINE_SPACING + 1;
           });
         } else {
           // Single paragraph
@@ -705,9 +712,9 @@ function generateOxfordPDF(pdf, formData) {
           pdf.setTextColor(...COLORS.gray);
           const descLines = pdf.splitTextToSize(job.description, CONTENT_WIDTH - 8);
           descLines.forEach((line, i) => {
-            pdf.text(line, leftMargin + 6, y + (i * 4));
+            pdf.text(line, leftMargin + 6, y + (i * LINE_SPACING));
           });
-          y += descLines.length * 4;
+          y += descLines.length * LINE_SPACING;
         }
       }
 
@@ -715,7 +722,7 @@ function generateOxfordPDF(pdf, formData) {
       pdf.setDrawColor(180, 180, 180);
       pdf.setLineWidth(0.8);
       pdf.line(leftMargin + 2, startY, leftMargin + 2, y);
-      y += 5;
+      y += LINE_SPACING;
     });
   }
 
@@ -728,14 +735,14 @@ function generateOxfordPDF(pdf, formData) {
     pdf.setTextColor(...COLORS.gray);
     const skillsLines = pdf.splitTextToSize(formData.skills, CONTENT_WIDTH - 8);
     skillsLines.forEach((line, i) => {
-      pdf.text(line, leftMargin + 6, y + (i * 4.5));
+      pdf.text(line, leftMargin + 6, y + (i * LINE_SPACING));
     });
     
     // Left border
     pdf.setDrawColor(180, 180, 180);
     pdf.setLineWidth(0.8);
-    pdf.line(leftMargin + 2, startY, leftMargin + 2, y + skillsLines.length * 4.5);
-    y += skillsLines.length * 4.5 + 6;
+    pdf.line(leftMargin + 2, startY, leftMargin + 2, y + skillsLines.length * LINE_SPACING);
+    y += skillsLines.length * LINE_SPACING + LINE_SPACING;
   }
 
   // ===== LANGUAGES =====
@@ -753,8 +760,8 @@ function generateOxfordPDF(pdf, formData) {
     // Left border
     pdf.setDrawColor(180, 180, 180);
     pdf.setLineWidth(0.8);
-    pdf.line(leftMargin + 2, startY, leftMargin + 2, y + 4);
-    y += 10;
+    pdf.line(leftMargin + 2, startY, leftMargin + 2, y + LINE_SPACING);
+    y += LINE_SPACING + 4;
   }
 
   // Footer
@@ -768,6 +775,407 @@ function generateOxfordPDF(pdf, formData) {
   const footerText = 'References available upon request';
   const footerWidth = pdf.getTextWidth(footerText);
   pdf.text(footerText, (A4_WIDTH - footerWidth) / 2, y);
+}
+
+/**
+ * Creative Template PDF Generator
+ * Bold design with clean formatting
+ */
+function generateCreativePDF(pdf, formData) {
+  let y = MARGIN;
+  const leftMargin = MARGIN;
+  const rightMargin = A4_WIDTH - MARGIN;
+
+  const setFont = (style = 'normal', size = 10) => {
+    pdf.setFont('helvetica', style);
+    pdf.setFontSize(size);
+  };
+
+  const checkPage = (needed = 15) => {
+    if (y + needed > A4_HEIGHT - MARGIN) {
+      pdf.addPage();
+      y = MARGIN;
+    }
+  };
+
+  // ===== HEADER =====
+  if (formData.fullName) {
+    setFont('bold', 28);
+    pdf.setTextColor(...COLORS.black);
+    const nameWidth = pdf.getTextWidth(formData.fullName);
+    pdf.text(formData.fullName, (A4_WIDTH - nameWidth) / 2, y);
+    y += LINE_SPACING + 2;
+  }
+
+  // Summary under name
+  if (formData.summary) {
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const summaryPreview = formData.summary.substring(0, 150) + (formData.summary.length > 150 ? '...' : '');
+    const summaryLines = pdf.splitTextToSize(summaryPreview, CONTENT_WIDTH - 20);
+    summaryLines.forEach((line, i) => {
+      const lineWidth = pdf.getTextWidth(line);
+      pdf.text(line, (A4_WIDTH - lineWidth) / 2, y + (i * LINE_SPACING));
+    });
+    y += summaryLines.length * LINE_SPACING + LINE_SPACING;
+  }
+
+  // Contact line
+  const contactParts = [];
+  if (formData.email) contactParts.push(formData.email);
+  if (formData.phone) contactParts.push(formData.phone);
+  if (formData.location) contactParts.push(formData.location);
+  if (contactParts.length > 0) {
+    setFont('normal', 9);
+    pdf.setTextColor(...COLORS.gray);
+    const contactText = contactParts.join(' • ');
+    const contactWidth = pdf.getTextWidth(contactText);
+    pdf.text(contactText, (A4_WIDTH - contactWidth) / 2, y);
+    y += LINE_SPACING;
+  }
+
+  // Links line
+  const linkParts = [];
+  if (formData.linkedin) linkParts.push(formData.linkedin.replace(/^https?:\/\//, ''));
+  if (formData.github) linkParts.push(`github.com/${formData.github}`);
+  if (formData.portfolio) linkParts.push(formData.portfolio.replace(/^https?:\/\//, ''));
+  if (linkParts.length > 0) {
+    setFont('normal', 9);
+    pdf.setTextColor(...COLORS.gray);
+    const linkText = linkParts.join(' • ');
+    const linkWidth = pdf.getTextWidth(linkText);
+    pdf.text(linkText, (A4_WIDTH - linkWidth) / 2, y);
+    y += LINE_SPACING + 2;
+  }
+
+  // Separator line
+  pdf.setDrawColor(0, 0, 0);
+  pdf.setLineWidth(0.5);
+  pdf.line(leftMargin, y, rightMargin, y);
+  y += LINE_SPACING;
+
+  // ===== EXPERIENCE =====
+  if (formData.experience && formData.experience.length > 0) {
+    checkPage(20);
+    setFont('bold', 12);
+    pdf.setTextColor(...COLORS.black);
+    pdf.text('EXPERIENCE', leftMargin, y);
+    y += LINE_SPACING;
+
+    formData.experience.forEach(job => {
+      checkPage(18);
+      
+      setFont('bold', 11);
+      pdf.setTextColor(...COLORS.black);
+      pdf.text(job.title || '', leftMargin, y);
+      
+      const dateText = `${job.startDate || ''} – ${job.endDate || 'Present'}`;
+      setFont('normal', 9);
+      pdf.setTextColor(...COLORS.gray);
+      const dateWidth = pdf.getTextWidth(dateText);
+      pdf.text(dateText, rightMargin - dateWidth, y);
+      y += LINE_SPACING;
+
+      if (job.company) {
+        setFont('italic', 10);
+        pdf.setTextColor(...COLORS.darkGray);
+        pdf.text(job.company, leftMargin, y);
+        y += LINE_SPACING;
+      }
+
+      if (job.description) {
+        const lines = job.description.split('\n').filter(l => l.trim());
+        lines.forEach(line => {
+          checkPage(5);
+          const cleanLine = line.replace(/^[-•]\s*/, '');
+          setFont('normal', 9);
+          pdf.setTextColor(...COLORS.gray);
+          
+          pdf.text('•', leftMargin + 2, y);
+          const textLines = pdf.splitTextToSize(cleanLine, CONTENT_WIDTH - 8);
+          textLines.forEach((tl, i) => {
+            pdf.text(tl, leftMargin + 6, y + (i * LINE_SPACING));
+          });
+          y += textLines.length * LINE_SPACING + 1;
+        });
+      }
+      y += 3;
+    });
+  }
+
+  // ===== EDUCATION =====
+  if (formData.education && formData.education.length > 0) {
+    checkPage(20);
+    setFont('bold', 12);
+    pdf.setTextColor(...COLORS.black);
+    pdf.text('EDUCATION', leftMargin, y);
+    y += LINE_SPACING;
+
+    formData.education.forEach(edu => {
+      checkPage(12);
+      
+      setFont('bold', 11);
+      pdf.setTextColor(...COLORS.black);
+      pdf.text(edu.school || '', leftMargin, y);
+      
+      if (edu.year) {
+        setFont('normal', 10);
+        pdf.setTextColor(...COLORS.gray);
+        const yearWidth = pdf.getTextWidth(edu.year);
+        pdf.text(edu.year, rightMargin - yearWidth, y);
+      }
+      y += LINE_SPACING;
+
+      if (edu.degree) {
+        setFont('italic', 10);
+        pdf.setTextColor(...COLORS.darkGray);
+        pdf.text(edu.degree, leftMargin, y);
+        y += LINE_SPACING;
+      }
+
+      const grades = [];
+      if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+      if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+      if (grades.length > 0) {
+        setFont('normal', 9);
+        pdf.setTextColor(...COLORS.gray);
+        pdf.text(grades.join(' | '), leftMargin, y);
+        y += LINE_SPACING;
+      }
+      y += 2;
+    });
+  }
+
+  // ===== SKILLS =====
+  if (formData.skills) {
+    checkPage(12);
+    setFont('bold', 12);
+    pdf.setTextColor(...COLORS.black);
+    pdf.text('SKILLS', leftMargin, y);
+    y += LINE_SPACING;
+
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.darkGray);
+    const skillsLines = pdf.splitTextToSize(formData.skills, CONTENT_WIDTH);
+    skillsLines.forEach((line, i) => {
+      pdf.text(line, leftMargin, y + (i * LINE_SPACING));
+    });
+    y += skillsLines.length * LINE_SPACING + LINE_SPACING;
+  }
+
+  // ===== LANGUAGES =====
+  if (formData.languages && formData.languages.length > 0) {
+    checkPage(12);
+    setFont('bold', 12);
+    pdf.setTextColor(...COLORS.black);
+    pdf.text('LANGUAGES', leftMargin, y);
+    y += LINE_SPACING;
+
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.darkGray);
+    const langText = formData.languages
+      .map(l => `${l.language} (${l.proficiency})`)
+      .join(' | ');
+    pdf.text(langText, leftMargin, y);
+  }
+}
+
+/**
+ * Minimalist Template PDF Generator
+ * Clean, elegant design with centered elements
+ */
+function generateMinimalistPDF(pdf, formData) {
+  let y = MARGIN;
+  const leftMargin = MARGIN;
+  const rightMargin = A4_WIDTH - MARGIN;
+
+  const setFont = (style = 'normal', size = 10) => {
+    pdf.setFont('helvetica', style);
+    pdf.setFontSize(size);
+  };
+
+  const checkPage = (needed = 15) => {
+    if (y + needed > A4_HEIGHT - MARGIN) {
+      pdf.addPage();
+      y = MARGIN;
+    }
+  };
+
+  const addSectionHeader = (text) => {
+    checkPage(15);
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const headerWidth = pdf.getTextWidth(text.toUpperCase());
+    pdf.text(text.toUpperCase(), (A4_WIDTH - headerWidth) / 2, y);
+    y += LINE_SPACING;
+  };
+
+  // ===== HEADER =====
+  if (formData.fullName) {
+    setFont('normal', 28);
+    pdf.setTextColor(...COLORS.black);
+    const nameWidth = pdf.getTextWidth(formData.fullName);
+    pdf.text(formData.fullName, (A4_WIDTH - nameWidth) / 2, y);
+    y += LINE_SPACING + 4;
+  }
+
+  // Contact info centered
+  const contactParts = [];
+  if (formData.email) contactParts.push(formData.email);
+  if (formData.phone) contactParts.push(formData.phone);
+  if (formData.location) contactParts.push(formData.location);
+  if (contactParts.length > 0) {
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const contactText = contactParts.join(' | ');
+    const contactWidth = pdf.getTextWidth(contactText);
+    pdf.text(contactText, (A4_WIDTH - contactWidth) / 2, y);
+    y += LINE_SPACING;
+  }
+
+  // Links centered
+  const linkParts = [];
+  if (formData.linkedin) linkParts.push(formData.linkedin.replace(/^https?:\/\//, ''));
+  if (formData.github) linkParts.push(`github.com/${formData.github}`);
+  if (formData.portfolio) linkParts.push(formData.portfolio.replace(/^https?:\/\//, ''));
+  if (linkParts.length > 0) {
+    setFont('normal', 9);
+    pdf.setTextColor(...COLORS.lightGray);
+    const linkText = linkParts.join(' | ');
+    const linkWidth = pdf.getTextWidth(linkText);
+    pdf.text(linkText, (A4_WIDTH - linkWidth) / 2, y);
+    y += LINE_SPACING;
+  }
+
+  // Separator
+  y += 2;
+  pdf.setDrawColor(220, 220, 220);
+  pdf.setLineWidth(0.3);
+  pdf.line(leftMargin + 40, y, rightMargin - 40, y);
+  y += LINE_SPACING;
+
+  // ===== SUMMARY =====
+  if (formData.summary) {
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const summaryLines = pdf.splitTextToSize(formData.summary, CONTENT_WIDTH - 20);
+    summaryLines.forEach((line, i) => {
+      const lineWidth = pdf.getTextWidth(line);
+      pdf.text(line, (A4_WIDTH - lineWidth) / 2, y + (i * LINE_SPACING));
+    });
+    y += summaryLines.length * LINE_SPACING + LINE_SPACING;
+  }
+
+  // ===== EXPERIENCE =====
+  if (formData.experience && formData.experience.length > 0) {
+    addSectionHeader('Experience');
+
+    formData.experience.forEach(job => {
+      checkPage(18);
+      
+      setFont('bold', 11);
+      pdf.setTextColor(...COLORS.black);
+      pdf.text(job.title || '', leftMargin, y);
+      
+      const dateText = `${job.startDate || ''} — ${job.endDate || 'Present'}`;
+      setFont('normal', 9);
+      pdf.setTextColor(...COLORS.lightGray);
+      const dateWidth = pdf.getTextWidth(dateText);
+      pdf.text(dateText, rightMargin - dateWidth, y);
+      y += LINE_SPACING;
+
+      if (job.company) {
+        setFont('normal', 10);
+        pdf.setTextColor(...COLORS.gray);
+        pdf.text(job.company, leftMargin, y);
+        y += LINE_SPACING;
+      }
+
+      if (job.description) {
+        const lines = job.description.split('\n').filter(l => l.trim());
+        lines.forEach(line => {
+          checkPage(5);
+          const cleanLine = line.replace(/^[-•]\s*/, '');
+          setFont('normal', 9);
+          pdf.setTextColor(...COLORS.gray);
+          
+          pdf.text('–', leftMargin + 2, y);
+          const textLines = pdf.splitTextToSize(cleanLine, CONTENT_WIDTH - 8);
+          textLines.forEach((tl, i) => {
+            pdf.text(tl, leftMargin + 6, y + (i * LINE_SPACING));
+          });
+          y += textLines.length * LINE_SPACING + 1;
+        });
+      }
+      y += 3;
+    });
+  }
+
+  // ===== EDUCATION =====
+  if (formData.education && formData.education.length > 0) {
+    addSectionHeader('Education');
+
+    formData.education.forEach(edu => {
+      checkPage(12);
+      
+      setFont('bold', 11);
+      pdf.setTextColor(...COLORS.black);
+      pdf.text(edu.school || '', leftMargin, y);
+      
+      if (edu.year) {
+        setFont('normal', 9);
+        pdf.setTextColor(...COLORS.lightGray);
+        const yearWidth = pdf.getTextWidth(edu.year);
+        pdf.text(edu.year, rightMargin - yearWidth, y);
+      }
+      y += LINE_SPACING;
+
+      if (edu.degree) {
+        setFont('normal', 10);
+        pdf.setTextColor(...COLORS.gray);
+        pdf.text(edu.degree, leftMargin, y);
+        y += LINE_SPACING;
+      }
+
+      const grades = [];
+      if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+      if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+      if (grades.length > 0) {
+        setFont('normal', 9);
+        pdf.setTextColor(...COLORS.lightGray);
+        pdf.text(grades.join(' · '), leftMargin, y);
+        y += LINE_SPACING;
+      }
+      y += 2;
+    });
+  }
+
+  // ===== SKILLS =====
+  if (formData.skills) {
+    addSectionHeader('Skills');
+
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const skillsLines = pdf.splitTextToSize(formData.skills, CONTENT_WIDTH);
+    skillsLines.forEach((line, i) => {
+      const lineWidth = pdf.getTextWidth(line);
+      pdf.text(line, (A4_WIDTH - lineWidth) / 2, y + (i * LINE_SPACING));
+    });
+    y += skillsLines.length * LINE_SPACING + LINE_SPACING;
+  }
+
+  // ===== LANGUAGES =====
+  if (formData.languages && formData.languages.length > 0) {
+    addSectionHeader('Languages');
+
+    setFont('normal', 10);
+    pdf.setTextColor(...COLORS.gray);
+    const langText = formData.languages
+      .map(l => `${l.language} (${l.proficiency})`)
+      .join(' | ');
+    const langWidth = pdf.getTextWidth(langText);
+    pdf.text(langText, (A4_WIDTH - langWidth) / 2, y);
+  }
 }
 
 /**
