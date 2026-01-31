@@ -157,7 +157,7 @@ function OxfordPage() {
     setIsSaving(true);
     setSaveStatus('Generating PDF...');
     
-    const result = await generatePDF('resume-preview', `${formData.fullName.replace(/\s+/g, '_')}_Resume_Oxford.pdf`);
+    const result = await generatePDF(formData, `${formData.fullName.replace(/\s+/g, '_')}_Resume_Oxford.pdf`, 'oxford');
     
     if (result.success) {
       setSaveStatus('PDF downloaded!');

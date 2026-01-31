@@ -22,7 +22,7 @@ const OxfordTemplate = ({ formData }) => {
       id="resume-preview"
       style={{
         fontFamily: '"Times New Roman", Times, serif',
-        padding: '72px', // 1 inch margins
+        padding: '72px',
         boxSizing: 'border-box',
         lineHeight: '1.4'
       }}
