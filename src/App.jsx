@@ -4,6 +4,7 @@ import InputGroup from './components/InputGroup';
 import SectionHeader from './components/SectionHeader';
 import ExperienceCard from './components/ExperienceCard';
 import EducationCard from './components/EducationCard';
+import LanguageCard from './components/LanguageCard';
 import ResumePreview from './components/ResumePreview';
 import CodeView from './components/CodeView';
 import { generateMarkdown, generateLatex, generateJSON } from './utils/generators';
@@ -22,6 +23,10 @@ function App() {
   useEffect(() => {
     const savedData = loadFromLocalStorage();
     if (savedData) {
+      // Ensure languages array exists for backward compatibility
+      if (!savedData.languages) {
+        savedData.languages = [];
+      }
       setFormData(savedData);
       setSaveStatus('Loaded from storage');
       setTimeout(() => setSaveStatus(''), 2000);
@@ -97,6 +102,32 @@ function App() {
     }));
   };
 
+  const addLanguage = () => {
+    setFormData(prev => ({
+      ...prev,
+      languages: [
+        { id: Date.now(), language: "", proficiency: "Intermediate" },
+        ...prev.languages
+      ]
+    }));
+  };
+
+  const removeLanguage = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      languages: prev.languages.filter(item => item.id !== id)
+    }));
+  };
+
+  const updateLanguage = (id, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      languages: prev.languages.map(item => 
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -163,14 +194,14 @@ function App() {
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans text-slate-900">
       <div className="w-full md:w-5/12 lg:w-1/3 bg-white border-r border-slate-200 h-screen overflow-y-auto custom-scrollbar shadow-xl z-10">
         <div className="p-6">
-          <div className="mb-6 pb-6 border-b border-slate-100">
-            <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <div className="mb-6 pb-6 border-b border-slate-100 text-center">
+            <h1 className="text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
               <FileText className="text-blue-600" />
               Resume Builder
             </h1>
             <p className="text-slate-500 text-sm mt-1">Fill in details to generate your resume.</p>
             {saveStatus && (
-              <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
+              <div className="mt-2 text-xs text-green-600 flex items-center justify-center gap-1">
                 <Save size={12} /> {saveStatus}
               </div>
             )}
@@ -269,12 +300,26 @@ function App() {
               <InputGroup multiline label="Skills List (comma separated)" value={formData.skills} onChange={(v) => handleBasicChange('skills', v)} placeholder="JavaScript, Python, React, Node.js..." />
             </section>
 
+            <section>
+              <SectionHeader title="Languages" onAdd={addLanguage} />
+              <div className="space-y-4">
+                {formData.languages.map((lang) => (
+                  <LanguageCard
+                    key={lang.id}
+                    lang={lang}
+                    onUpdate={updateLanguage}
+                    onRemove={removeLanguage}
+                  />
+                ))}
+              </div>
+            </section>
+
             <div className="h-12"></div>
           </div>
         </div>
       </div>
 
-      <div className="hide-on-mobile hidden md:flex w-full md:w-7/12 lg:w-2/3 bg-slate-200 h-screen flex-col">
+      <div className="hidden md:flex w-full md:w-7/12 lg:w-2/3 bg-slate-200 h-screen flex-col">
         <div className="bg-white p-3 border-b border-slate-300 flex justify-center gap-4 shadow-sm z-10">
           <button
             onClick={() => setActiveTab('preview')}

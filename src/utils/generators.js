@@ -116,6 +116,13 @@ export const generateMarkdown = (data) => {
     });
   }
 
+  // Languages
+  if (data.languages && data.languages.length > 0) {
+    sections.push(`## 🌐 Languages\n`);
+    const langList = data.languages.map(lang => `**${lang.language}** - ${lang.proficiency}`);
+    sections.push(langList.join(' • '));
+  }
+
   // Footer
   sections.push('\n---');
   sections.push('\n<div align="center">');
@@ -144,7 +151,7 @@ export const generateLatex = (data) => {
 \\vspace{-1.5cm}
 \\begin{center}
     ${data.email} -- ${data.phone} -- ${data.location} \\\\
-    ${data.linkedin ? `\\url{${data.linkedin}}` : ''}
+    ${data.linkedin ? `\\url{${data.linkedin}}` : ''}${data.github ? ` -- GitHub: ${data.github}` : ''}${data.portfolio ? ` -- \\url{${data.portfolio}}` : ''}
 \\end{center}
 
 \\hrule
@@ -183,6 +190,14 @@ export const generateLatex = (data) => {
 
   if (data.skills) {
     parts.push(`\\section*{Skills}\n${data.skills}`);
+  }
+
+  if (data.languages && data.languages.length > 0) {
+    parts.push('\\section*{Languages}\n\\begin{itemize}[leftmargin=*]');
+    data.languages.forEach(lang => {
+      parts.push(`    \\item \\textbf{${lang.language}}: ${lang.proficiency}`);
+    });
+    parts.push('\\end{itemize}\n');
   }
 
   parts.push('\n\\end{document}');
