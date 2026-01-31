@@ -2,10 +2,18 @@ import React from 'react';
 import { COMMON_CLASSES } from '../utils/constants';
 
 const ResumePreview = ({ formData }) => {
+  // Calculate dynamic font size for long names
+  const getNameFontSize = (name) => {
+    const length = name.length;
+    if (length > 30) return 'text-2xl';
+    if (length > 25) return 'text-3xl';
+    return 'text-4xl';
+  };
+
   return (
     <div className="bg-white shadow-lg p-8 min-h-[800px] w-full max-w-[800px] mx-auto text-slate-800 fade-in" id="resume-preview">
       <div className="text-center border-b-2 border-slate-800 pb-6 mb-6">
-        <h1 className="text-4xl font-bold uppercase tracking-wider mb-2">{formData.fullName}</h1>
+        <h1 className={`${getNameFontSize(formData.fullName)} font-bold uppercase tracking-wider mb-2 whitespace-nowrap overflow-hidden text-ellipsis px-2`}>{formData.fullName}</h1>
         <div className="text-sm text-slate-600 flex flex-wrap justify-center gap-3">
           <span>{formData.email}</span>
           <span>•</span>
@@ -56,6 +64,13 @@ const ResumePreview = ({ formData }) => {
                 <div>
                   <h3 className="font-bold text-slate-800">{edu.degree}</h3>
                   <div className="text-slate-600">{edu.school}</div>
+                  {(edu.gpa || edu.cgpa) && (
+                    <div className="text-slate-500 text-sm mt-1">
+                      {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                      {edu.gpa && edu.cgpa && <span> • </span>}
+                      {edu.cgpa && <span>CGPA: {edu.cgpa}</span>}
+                    </div>
+                  )}
                 </div>
                 <div className="text-slate-500 font-medium">{edu.year}</div>
               </div>

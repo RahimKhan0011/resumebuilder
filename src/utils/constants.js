@@ -43,7 +43,9 @@ export const INITIAL_DATA = {
       id: 1,
       degree: "B.S. Computer Science",
       school: "University of Technology",
-      year: "2018"
+      year: "2018",
+      gpa: "",
+      cgpa: ""
     }
   ]
 };

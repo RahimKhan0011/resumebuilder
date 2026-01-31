@@ -105,7 +105,14 @@ export const generateMarkdown = (data) => {
     sections.push(`## 🎓 Education\n`);
     data.education.forEach(edu => {
       sections.push(`### ${edu.degree}`);
-      sections.push(`**${edu.school}** • ${edu.year}\n`);
+      let schoolLine = `**${edu.school}** • ${edu.year}`;
+      if (edu.gpa || edu.cgpa) {
+        const grades = [];
+        if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+        if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+        schoolLine += ` • ${grades.join(' • ')}`;
+      }
+      sections.push(schoolLine + '\n');
     });
   }
 
@@ -161,7 +168,15 @@ export const generateLatex = (data) => {
   if (data.education.length > 0) {
     parts.push('\\section*{Education}\n\\begin{itemize}[leftmargin=*]');
     data.education.forEach(edu => {
-      parts.push(`    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}`);
+      let eduLine = `    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}`;
+      if (edu.gpa || edu.cgpa) {
+        eduLine += ' \\\\';
+        const grades = [];
+        if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+        if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+        eduLine += `\n    ${grades.join(' • ')}`;
+      }
+      parts.push(eduLine);
     });
     parts.push('\\end{itemize}\n');
   }

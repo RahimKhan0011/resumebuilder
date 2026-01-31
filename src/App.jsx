@@ -75,7 +75,7 @@ function App() {
     setFormData(prev => ({
       ...prev,
       education: [
-        { id: Date.now(), degree: "", school: "", year: "" },
+        { id: Date.now(), degree: "", school: "", year: "", gpa: "", cgpa: "" },
         ...prev.education
       ]
     }));
@@ -274,7 +274,7 @@ function App() {
         </div>
       </div>
 
-      <div className="w-full md:w-7/12 lg:w-2/3 bg-slate-200 h-screen flex flex-col">
+      <div className="hide-on-mobile hidden md:flex w-full md:w-7/12 lg:w-2/3 bg-slate-200 h-screen flex-col">
         <div className="bg-white p-3 border-b border-slate-300 flex justify-center gap-4 shadow-sm z-10">
           <button
             onClick={() => setActiveTab('preview')}
