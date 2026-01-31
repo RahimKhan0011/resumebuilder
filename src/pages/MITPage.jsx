@@ -157,7 +157,7 @@ function MITPage() {
     setIsSaving(true);
     setSaveStatus('Generating PDF...');
     
-    const result = await generatePDF('resume-preview', `${formData.fullName.replace(/\s+/g, '_')}_Resume_MIT.pdf`);
+    const result = await generatePDF(formData, `${formData.fullName.replace(/\s+/g, '_')}_Resume_MIT.pdf`, 'mit');
     
     if (result.success) {
       setSaveStatus('PDF downloaded!');
