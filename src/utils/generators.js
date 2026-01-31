@@ -105,8 +105,22 @@ export const generateMarkdown = (data) => {
     sections.push(`## 🎓 Education\n`);
     data.education.forEach(edu => {
       sections.push(`### ${edu.degree}`);
-      sections.push(`**${edu.school}** • ${edu.year}\n`);
+      let schoolLine = `**${edu.school}** • ${edu.year}`;
+      if (edu.gpa || edu.cgpa) {
+        const grades = [];
+        if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+        if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+        schoolLine += ` • ${grades.join(' • ')}`;
+      }
+      sections.push(schoolLine + '\n');
     });
+  }
+
+  // Languages
+  if (data.languages && data.languages.length > 0) {
+    sections.push(`## 🌐 Languages\n`);
+    const langList = data.languages.map(lang => `**${lang.language}** - ${lang.proficiency}`);
+    sections.push(langList.join(' • '));
   }
 
   // Footer
@@ -137,7 +151,7 @@ export const generateLatex = (data) => {
 \\vspace{-1.5cm}
 \\begin{center}
     ${data.email} -- ${data.phone} -- ${data.location} \\\\
-    ${data.linkedin ? `\\url{${data.linkedin}}` : ''}
+    ${data.linkedin ? `\\url{${data.linkedin}}` : ''}${data.github ? ` -- GitHub: ${data.github}` : ''}${data.portfolio ? ` -- \\url{${data.portfolio}}` : ''}
 \\end{center}
 
 \\hrule
@@ -161,13 +175,29 @@ export const generateLatex = (data) => {
   if (data.education.length > 0) {
     parts.push('\\section*{Education}\n\\begin{itemize}[leftmargin=*]');
     data.education.forEach(edu => {
-      parts.push(`    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}`);
+      let eduLine = `    \\item \\textbf{${edu.degree}}, ${edu.school} \\hfill ${edu.year}`;
+      if (edu.gpa || edu.cgpa) {
+        eduLine += ' \\\\';
+        const grades = [];
+        if (edu.gpa) grades.push(`GPA: ${edu.gpa}`);
+        if (edu.cgpa) grades.push(`CGPA: ${edu.cgpa}`);
+        eduLine += `\n    ${grades.join(' • ')}`;
+      }
+      parts.push(eduLine);
     });
     parts.push('\\end{itemize}\n');
   }
 
   if (data.skills) {
     parts.push(`\\section*{Skills}\n${data.skills}`);
+  }
+
+  if (data.languages && data.languages.length > 0) {
+    parts.push('\\section*{Languages}\n\\begin{itemize}[leftmargin=*]');
+    data.languages.forEach(lang => {
+      parts.push(`    \\item \\textbf{${lang.language}}: ${lang.proficiency}`);
+    });
+    parts.push('\\end{itemize}\n');
   }
 
   parts.push('\n\\end{document}');

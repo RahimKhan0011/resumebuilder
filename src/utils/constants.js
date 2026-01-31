@@ -20,6 +20,13 @@ export const INITIAL_DATA = {
   portfolio: "https://alexdev.com",
   summary: "Detail-oriented software engineer with 5+ years of experience building scalable web applications. Passionate about clean code and user-centric design.",
   skills: "JavaScript, React, Node.js, Python, SQL, Git, AWS, TypeScript, Docker",
+  languages: [
+    {
+      id: 1,
+      language: "English",
+      proficiency: "Native"
+    }
+  ],
   experience: [
     {
       id: 1,
@@ -43,7 +50,9 @@ export const INITIAL_DATA = {
       id: 1,
       degree: "B.S. Computer Science",
       school: "University of Technology",
-      year: "2018"
+      year: "2018",
+      gpa: "",
+      cgpa: ""
     }
   ]
 };

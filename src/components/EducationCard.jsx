@@ -33,6 +33,20 @@ const EducationCard = ({ edu, onUpdate, onRemove }) => {
           placeholder="2018" 
         />
       </div>
+      <div className="grid grid-cols-2 gap-3 mt-3">
+        <InputGroup 
+          label="GPA (optional)" 
+          value={edu.gpa || ''} 
+          onChange={(v) => onUpdate(edu.id, 'gpa', v)} 
+          placeholder="3.8/4.0" 
+        />
+        <InputGroup 
+          label="CGPA (optional)" 
+          value={edu.cgpa || ''} 
+          onChange={(v) => onUpdate(edu.id, 'cgpa', v)} 
+          placeholder="8.5/10" 
+        />
+      </div>
     </div>
   );
 };
