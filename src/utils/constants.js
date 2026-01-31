@@ -6,7 +6,8 @@ export const COMMON_CLASSES = {
   addButton: "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200",
   tabButton: (isActive) => `flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all duration-300 ${
     isActive ? 'bg-slate-800 text-white shadow-md scale-105' : 'text-slate-600 hover:bg-slate-100 hover:scale-102'
-  }`
+  }`,
+  actionButton: "flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
 };
 
 export const INITIAL_DATA = {
@@ -15,8 +16,10 @@ export const INITIAL_DATA = {
   phone: "(555) 123-4567",
   location: "San Francisco, CA",
   linkedin: "linkedin.com/in/alexdev",
+  github: "alexdev",
+  portfolio: "https://alexdev.com",
   summary: "Detail-oriented software engineer with 5+ years of experience building scalable web applications. Passionate about clean code and user-centric design.",
-  skills: "JavaScript (ES6+), React, Node.js, Python, SQL, Git, AWS, Tailwind CSS",
+  skills: "JavaScript, React, Node.js, Python, SQL, Git, AWS, TypeScript, Docker",
   experience: [
     {
       id: 1,

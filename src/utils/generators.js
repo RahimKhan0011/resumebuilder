@@ -1,36 +1,119 @@
 export const generateMarkdown = (data) => {
   const sections = [];
   
-  sections.push(`# ${data.fullName}`);
-  sections.push(`${data.email} | ${data.phone} | ${data.location}`);
+  // Header with name and badges
+  sections.push(`<div align="center">`);
+  sections.push(`\n# ${data.fullName}\n`);
+  
+  // Contact information with icons
+  const contacts = [];
+  if (data.email) contacts.push(`📧 ${data.email}`);
+  if (data.phone) contacts.push(`📱 ${data.phone}`);
+  if (data.location) contacts.push(`📍 ${data.location}`);
+  if (contacts.length > 0) {
+    sections.push(contacts.join(' • '));
+  }
+  
+  // Social links
   if (data.linkedin) {
-    sections.push(`[LinkedIn](${data.linkedin})`);
+    sections.push(`\n[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](${data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin})`);
   }
-  sections.push('---');
+  if (data.github) {
+    sections.push(`[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/${data.github})`);
+  }
+  if (data.portfolio) {
+    sections.push(`[![Portfolio](https://img.shields.io/badge/Portfolio-255E63?style=for-the-badge&logo=About.me&logoColor=white)](${data.portfolio})`);
+  }
+  
+  sections.push(`\n</div>\n`);
+  sections.push('---\n');
 
+  // GitHub Stats (if GitHub username provided)
+  if (data.github) {
+    sections.push(`## 📊 GitHub Stats\n`);
+    sections.push(`<div align="center">\n`);
+    sections.push(`![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${data.github}&show_icons=true&theme=radical&hide_border=true)\n`);
+    sections.push(`![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=${data.github}&layout=compact&theme=radical&hide_border=true)\n`);
+    sections.push(`![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=${data.github}&theme=radical&hide_border=true)\n`);
+    sections.push(`</div>\n`);
+  }
+
+  // Professional Summary
   if (data.summary) {
-    sections.push(`## Professional Summary\n\n${data.summary}`);
+    sections.push(`## 💼 Professional Summary\n\n${data.summary}\n`);
   }
 
-  if (data.experience.length > 0) {
-    const expSection = ['## Experience'];
-    data.experience.forEach(job => {
-      expSection.push(`### ${job.title}\n**${job.company}** | ${job.startDate} - ${job.endDate}\n\n${job.description}`);
-    });
-    sections.push(expSection.join('\n\n'));
-  }
-
-  if (data.education.length > 0) {
-    const eduSection = ['## Education'];
-    data.education.forEach(edu => {
-      eduSection.push(`### ${edu.degree}\n**${edu.school}** | ${edu.year}`);
-    });
-    sections.push(eduSection.join('\n\n'));
-  }
-
+  // Skills with badges
   if (data.skills) {
-    sections.push(`## Skills\n\n${data.skills}`);
+    sections.push(`## 🛠️ Skills & Technologies\n`);
+    const skillsList = data.skills.split(',').map(s => s.trim());
+    const skillBadges = skillsList.map(skill => {
+      const skillLower = skill.toLowerCase();
+      let badge = '';
+      
+      // Map common skills to badges
+      if (skillLower.includes('javascript') || skillLower.includes('js')) {
+        badge = `![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)`;
+      } else if (skillLower.includes('react')) {
+        badge = `![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)`;
+      } else if (skillLower.includes('node')) {
+        badge = `![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)`;
+      } else if (skillLower.includes('python')) {
+        badge = `![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)`;
+      } else if (skillLower.includes('java')) {
+        badge = `![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)`;
+      } else if (skillLower.includes('typescript')) {
+        badge = `![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)`;
+      } else if (skillLower.includes('sql')) {
+        badge = `![SQL](https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)`;
+      } else if (skillLower.includes('git')) {
+        badge = `![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)`;
+      } else if (skillLower.includes('docker')) {
+        badge = `![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)`;
+      } else if (skillLower.includes('aws')) {
+        badge = `![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)`;
+      } else if (skillLower.includes('css')) {
+        badge = `![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)`;
+      } else if (skillLower.includes('html')) {
+        badge = `![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)`;
+      } else {
+        badge = `![${skill}](https://img.shields.io/badge/${encodeURIComponent(skill)}-blue?style=for-the-badge)`;
+      }
+      
+      return badge;
+    });
+    
+    sections.push(skillBadges.join(' '));
+    sections.push('');
   }
+
+  // Experience with timeline
+  if (data.experience.length > 0) {
+    sections.push(`## 💻 Experience\n`);
+    data.experience.forEach((job, index) => {
+      sections.push(`### ${job.title}`);
+      sections.push(`**${job.company}** • ${job.startDate} - ${job.endDate}\n`);
+      sections.push(`${job.description}\n`);
+      if (index < data.experience.length - 1) {
+        sections.push('---\n');
+      }
+    });
+  }
+
+  // Education
+  if (data.education.length > 0) {
+    sections.push(`## 🎓 Education\n`);
+    data.education.forEach(edu => {
+      sections.push(`### ${edu.degree}`);
+      sections.push(`**${edu.school}** • ${edu.year}\n`);
+    });
+  }
+
+  // Footer
+  sections.push('\n---');
+  sections.push('\n<div align="center">');
+  sections.push(`\n*Generated with ❤️ by Resume Builder*`);
+  sections.push('\n</div>');
 
   return sections.join('\n\n');
 };
@@ -89,4 +172,8 @@ export const generateLatex = (data) => {
 
   parts.push('\n\\end{document}');
   return parts.join('\n');
+};
+
+export const generateJSON = (data) => {
+  return JSON.stringify(data, null, 2);
 };

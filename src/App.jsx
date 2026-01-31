@@ -1,18 +1,45 @@
-import React, { useState } from 'react';
-import { FileText, Code, Download } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { FileText, Code, Download, Save, Trash2, Upload, FileJson } from 'lucide-react';
 import InputGroup from './components/InputGroup';
 import SectionHeader from './components/SectionHeader';
 import ExperienceCard from './components/ExperienceCard';
 import EducationCard from './components/EducationCard';
 import ResumePreview from './components/ResumePreview';
 import CodeView from './components/CodeView';
-import { generateMarkdown, generateLatex } from './utils/generators';
+import { generateMarkdown, generateLatex, generateJSON } from './utils/generators';
 import { COMMON_CLASSES, INITIAL_DATA } from './utils/constants';
+import { saveToLocalStorage, loadFromLocalStorage, clearLocalStorage } from './utils/storage';
+import { generatePDF, downloadFile } from './utils/pdfGenerator';
 
 function App() {
   const [activeTab, setActiveTab] = useState('preview');
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState(INITIAL_DATA);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+
+  // Load data from localStorage on mount
+  useEffect(() => {
+    const savedData = loadFromLocalStorage();
+    if (savedData) {
+      setFormData(savedData);
+      setSaveStatus('Loaded from storage');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }
+  }, []);
+
+  // Auto-save to localStorage with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (JSON.stringify(formData) !== JSON.stringify(INITIAL_DATA)) {
+        saveToLocalStorage(formData);
+        setSaveStatus('Auto-saved');
+        setTimeout(() => setSaveStatus(''), 1500);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [formData]);
 
   const handleBasicChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -80,6 +107,58 @@ function App() {
     }
   };
 
+  const handleClearData = () => {
+    if (window.confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+      clearLocalStorage();
+      setFormData(INITIAL_DATA);
+      setSaveStatus('Data cleared');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }
+  };
+
+  const handleLoadSample = () => {
+    setFormData(INITIAL_DATA);
+    setSaveStatus('Sample data loaded');
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  const handleExportPDF = async () => {
+    setIsSaving(true);
+    setSaveStatus('Generating PDF...');
+    
+    const result = await generatePDF('resume-preview', `${formData.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
+    
+    if (result.success) {
+      setSaveStatus('PDF downloaded!');
+    } else {
+      setSaveStatus('PDF generation failed');
+    }
+    
+    setIsSaving(false);
+    setTimeout(() => setSaveStatus(''), 3000);
+  };
+
+  const handleExportJSON = () => {
+    const json = generateJSON(formData);
+    downloadFile(json, `${formData.fullName.replace(/\s+/g, '_')}_Resume.json`, 'application/json');
+    setSaveStatus('JSON exported!');
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  const handleExportMarkdown = () => {
+    const markdown = generateMarkdown(formData);
+    downloadFile(markdown, `${formData.fullName.replace(/\s+/g, '_')}_Resume.md`, 'text/markdown');
+    setSaveStatus('Markdown exported!');
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  const handleExportLatex = () => {
+    const latex = generateLatex(formData);
+    downloadFile(latex, `${formData.fullName.replace(/\s+/g, '_')}_Resume.tex`, 'text/plain');
+    setSaveStatus('LaTeX exported!');
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row font-sans text-slate-900">
       <div className="w-full md:w-5/12 lg:w-1/3 bg-white border-r border-slate-200 h-screen overflow-y-auto custom-scrollbar shadow-xl z-10">
@@ -89,7 +168,53 @@ function App() {
               <FileText className="text-blue-600" />
               Resume Builder
             </h1>
-            <p className="text-slate-500 text-sm mt-1">Fill in details to generate Markdown or LaTeX.</p>
+            <p className="text-slate-500 text-sm mt-1">Fill in details to generate your resume.</p>
+            {saveStatus && (
+              <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
+                <Save size={12} /> {saveStatus}
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            <button
+              onClick={handleExportPDF}
+              disabled={isSaving}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+            >
+              <Download size={14} /> Export PDF
+            </button>
+            <button
+              onClick={handleExportMarkdown}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+            >
+              <Download size={14} /> Export MD
+            </button>
+            <button
+              onClick={handleExportLatex}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+            >
+              <Download size={14} /> Export LaTeX
+            </button>
+            <button
+              onClick={handleExportJSON}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              <FileJson size={14} /> Export JSON
+            </button>
+            <button
+              onClick={handleLoadSample}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            >
+              <Upload size={14} /> Load Sample
+            </button>
+            <button
+              onClick={handleClearData}
+              className="flex items-center gap-1 px-3 py-2 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+            >
+              <Trash2 size={14} /> Clear All
+            </button>
           </div>
 
           <div className="space-y-6">
@@ -101,7 +226,9 @@ function App() {
                 <InputGroup label="Phone" value={formData.phone} onChange={(v) => handleBasicChange('phone', v)} placeholder="(555) 123-4567" />
               </div>
               <InputGroup label="Location" value={formData.location} onChange={(v) => handleBasicChange('location', v)} placeholder="New York, NY" />
-              <InputGroup label="LinkedIn / Website" value={formData.linkedin} onChange={(v) => handleBasicChange('linkedin', v)} placeholder="linkedin.com/in/janedoe" />
+              <InputGroup label="LinkedIn" value={formData.linkedin} onChange={(v) => handleBasicChange('linkedin', v)} placeholder="linkedin.com/in/janedoe" />
+              <InputGroup label="GitHub Username" value={formData.github} onChange={(v) => handleBasicChange('github', v)} placeholder="janedoe" />
+              <InputGroup label="Portfolio Website" value={formData.portfolio} onChange={(v) => handleBasicChange('portfolio', v)} placeholder="https://janedoe.com" />
             </section>
 
             <section>
@@ -139,7 +266,7 @@ function App() {
 
             <section>
               <h3 className="text-lg font-semibold text-slate-800 mb-4 mt-8">Skills</h3>
-              <InputGroup multiline label="Skills List" value={formData.skills} onChange={(v) => handleBasicChange('skills', v)} placeholder="Java, Python, Public Speaking..." />
+              <InputGroup multiline label="Skills List (comma separated)" value={formData.skills} onChange={(v) => handleBasicChange('skills', v)} placeholder="JavaScript, Python, React, Node.js..." />
             </section>
 
             <div className="h-12"></div>
@@ -167,6 +294,12 @@ function App() {
           >
             <Code size={16} /> LaTeX
           </button>
+          <button
+            onClick={() => setActiveTab('json')}
+            className={COMMON_CLASSES.tabButton(activeTab === 'json')}
+          >
+            <FileJson size={16} /> JSON
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 md:p-8 flex justify-center">
@@ -183,6 +316,14 @@ function App() {
             <CodeView 
               content={generateLatex(formData)} 
               language="LaTeX"
+              copied={copied}
+              onCopy={copyToClipboard}
+            />
+          )}
+          {activeTab === 'json' && (
+            <CodeView 
+              content={generateJSON(formData)} 
+              language="JSON"
               copied={copied}
               onCopy={copyToClipboard}
             />
